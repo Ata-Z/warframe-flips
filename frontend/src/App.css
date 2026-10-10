@@ -1,0 +1,11 @@
+body { font-family: system-ui, sans-serif; background: #101619; color: #e6e6e6; margin: 0; }
+main { max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
+.muted { color: #8a9aa3; }
+.controls { display: flex; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
+input { padding: 0.4rem; background: #1b252b; color: inherit; border: 1px solid #333; border-radius: 4px; }
+table { width: 100%; border-collapse: collapse; }
+th, td { padding: 0.5rem; text-align: left; border-bottom: 1px solid #263238; }
+th { cursor: pointer; user-select: none; white-space: nowrap; }
+a { color: #7cc4ff; text-decoration: none; }
+.good { color: #5ddc7a; }
+.bad { color: #ff6b6b; }

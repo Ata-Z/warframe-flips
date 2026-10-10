@@ -6,6 +6,7 @@ from datetime import datetime, timezone
 import httpx
 
 mods = [
+    'ytyutj'
     'primed_continuity', 'transient_fortitude', 'primed_flow', 'blind_rage', 'primed_ravage',
     'primed_ammo_stock', 'primed_bane_of_corpus', 'primed_bane_of_grineer', 'primed_bane_of_infested',
     'primed_bane_of_corrupted', 'primed_animal_instinct', 'primed_redirection', 'primed_reach',
@@ -33,21 +34,21 @@ RANK = None                  # None = any rank, 0 = unranked only, 10 = max rank
 
 class RateLimiter:
     def __init__(self, per_second):
-        self.interval = 1.0 / per_second
+        self._interval = 1.0 / per_second
         self._next = 0.0
         self._lock = asyncio.Lock()
 
     async def wait(self):
-        async with self._lock:
+        async with self._lock: # when the scrape method receives this lock, it'll enter the code below
             now = time.monotonic()
             delay = self._next - now
-            if delay > 0:
+            if delay > 0: # the first request will have negative value, so it'll skip the delay
                 await asyncio.sleep(delay)
                 now = time.monotonic()
-            self._next = now + self.interval
+            self._next = now + self._interval
 
     async def penalize(self, seconds):
-        """Push back all future requests (used on HTTP 429)."""
+        # This will change _next to whichever's larger, the current delay time, or the backoff period received by the server
         async with self._lock:
             self._next = max(self._next, time.monotonic() + seconds)
 
@@ -66,7 +67,7 @@ async def scrape_mod(mod, client, limiter):
                 await limiter.penalize(retry_after)
                 continue
             if resp.status_code == 404:
-                print(f"[{datetime.now()}] {mod}: not found (bad slug?)")
+                print(f"[{datetime.now()}] {mod}: not found")
                 return None
 
             resp.raise_for_status()
